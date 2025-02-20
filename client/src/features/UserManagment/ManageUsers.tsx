@@ -16,17 +16,18 @@ import {
 import {map, keyBy, debounce, isEmpty} from "lodash";
 import {api} from "../../store/api";
 import {formatDate} from "../../utils";
-import EditUser from "./EditUser";
-import CreateUser from "./CreateUser";
+import UserForm from "./UserForm";
 function MenuOptions(props: any) {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
-        <DotsHorizontalIcon />
+        <Button>
+          <DotsHorizontalIcon />
+        </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item onClick={(e) => e?.preventDefault()}>
-          <EditUser user={props.user} roles={props.roles} />
+        <DropdownMenu.Item onClick={props?.handleEdit}>
+          Edit User
         </DropdownMenu.Item>
         <DropdownMenu.Item>Delete User</DropdownMenu.Item>
       </DropdownMenu.Content>
@@ -37,6 +38,12 @@ function MenuOptions(props: any) {
 function ManageUsers() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedUser(null);
+  };
 
   const debouncedSetSearch = useMemo(
     () =>
@@ -68,31 +75,6 @@ function ManageUsers() {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading users</div>;
 
-  const handleCreateUser = async () => {
-    try {
-      await createUser({
-        first: "John",
-        last: "Doe",
-        roleId: "some-role-id",
-      });
-    } catch (err) {
-      console.error("Failed to create user:", err);
-    }
-  };
-
-  const handleUpdateUser = async (id: string) => {
-    try {
-      await updateUser({
-        id,
-        data: {
-          first: "Updated Name",
-        },
-      });
-    } catch (err) {
-      console.error("Failed to update user:", err);
-    }
-  };
-
   const handleDeleteUser = async (id: string) => {
     try {
       await deleteUser(id);
@@ -103,6 +85,14 @@ function ManageUsers() {
 
   return (
     <>
+      {(modalOpen || !!selectedUser) && (
+        <UserForm
+          handleClose={closeModal}
+          roles={rolesData?.data}
+          user={selectedUser}
+          open={!!selectedUser}
+        />
+      )}
       <Flex gap="4" mb="5" width="100">
         <Box flexGrow="2">
           <TextField.Root
@@ -116,8 +106,10 @@ function ManageUsers() {
             </TextField.Slot>
           </TextField.Root>
         </Box>
-
-        <CreateUser roles={rolesData?.data} />
+        <Button onClick={() => setModalOpen(true)}>
+          <PlusIcon />
+          Add User
+        </Button>
       </Flex>
 
       <Table.Root variant="surface" size="1">
@@ -149,7 +141,11 @@ function ManageUsers() {
                   <Table.Cell px="3">{roleDict[user.roleId].name}</Table.Cell>
                   <Table.Cell px="3">{formatDate(user.createdAt)}</Table.Cell>
                   <Table.Cell px="3" justify="end">
-                    <MenuOptions user={user} roles={rolesData?.data} />
+                    <MenuOptions
+                      user={user}
+                      roles={rolesData?.data}
+                      handleEdit={() => setSelectedUser(user)}
+                    />
                   </Table.Cell>
                 </Table.Row>
               );
