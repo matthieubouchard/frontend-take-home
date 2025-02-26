@@ -1,6 +1,6 @@
 # Running the project
 
-- `npm run dev` I'm using a monorepo workspaces pattern to install dependencies in both client and server and run the each repo's start command concurrently. Make sure you have nothing running on ports `5173` and `3002`. Once running, visit the client at [http://localhost:5173](http://localhost:5173)
+- I'm using a monorepo workspaces pattern to install dependencies in both client and server and run the each repo's start command concurrently. Make sure you have nothing running on ports `5173` and `3002` then run `npm run dev`. Once running, visit the client at [http://localhost:5173](http://localhost:5173)
 
 ### Project approach
 
