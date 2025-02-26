@@ -1,11 +1,26 @@
-import {Button, Flex, TextField, Select, Text, Dialog} from "@radix-ui/themes";
-import * as ControlledDialog from "@radix-ui/react-dialog";
-import {map} from "lodash";
-import {api} from "../../store/api";
+import { Root as ControlledRootDialog } from "@radix-ui/react-dialog";
+import {
+  Box,
+  Button,
+  Dialog,
+  Flex,
+  Select,
+  Text,
+  TextField,
+} from "@radix-ui/themes";
+import { map } from "lodash";
+import { api, Role, User } from "../../store/api";
+import Loader from "../../components/Loader";
 
-function EditUser(props) {
+interface IUserFormProps {
+  handleClose: () => void;
+  roles: Role[];
+  user?: User;
+}
+
+function UserForm(props: IUserFormProps) {
   const isCreate = !props.user;
-  const [createUser] = api.useCreateUserMutation();
+  const [createUser, {isLoading}] = api.useCreateUserMutation();
   const handleCreateUser = async () => {
     try {
       await createUser({
@@ -19,10 +34,10 @@ function EditUser(props) {
   };
 
   return (
-    <ControlledDialog.Root open={true} onOpenChange={props?.handleClose}>
+    <ControlledRootDialog open onOpenChange={props?.handleClose}>
+    <Loader loading={isLoading}/>
       <Dialog.Content>
         <Dialog.Title>{isCreate ? "Add a user" : "Edit User"}</Dialog.Title>
-        {/* <Dialog.Description>Make changes to your profile.</Dialog.Description> */}
         <Flex direction="column" gap="3">
           <label>
             <Text as="div" size="2" mb="1" weight="bold">
@@ -31,7 +46,7 @@ function EditUser(props) {
             <TextField.Root
               defaultValue={props?.user?.first}
               placeholder="Enter your first name"
-            />
+              />
           </label>
           <label>
             <Text as="div" size="2" mb="1" weight="bold">
@@ -40,22 +55,24 @@ function EditUser(props) {
             <TextField.Root
               defaultValue={props?.user?.last}
               placeholder="Enter your last name"
-            />
+              />
           </label>
           <label>
             <Text as="div" size="2" mb="1" weight="bold">
               Role
             </Text>
-            <Select.Root size="2" defaultValue={props?.user?.roleId}>
-              <Select.Trigger />
-              <Select.Content>
-                {map(props.roles, (r) => (
-                  <Select.Item key={r.id} value={r.id}>
-                    {r.name}
-                  </Select.Item>
-                ))}
-              </Select.Content>
-            </Select.Root>
+            <Box width="12rem">
+              <Select.Root size="2" defaultValue={props?.user?.roleId}>
+                <Select.Trigger />
+                <Select.Content>
+                  {map(props.roles, (r) => (
+                    <Select.Item key={r.id} value={r.id}>
+                      {r.name}
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Root>
+            </Box>
           </label>
         </Flex>
         <Flex gap="3" mt="4" justify="end">
@@ -77,13 +94,13 @@ function EditUser(props) {
                 props?.handleClose();
               }
             }}
-          >
+            >
             Save
           </Button>
         </Flex>
       </Dialog.Content>
-    </ControlledDialog.Root>
+    </ControlledRootDialog>
   );
 }
 
-export default EditUser;
+export default UserForm;
