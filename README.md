@@ -1,3 +1,27 @@
+# Running the project
+
+- `npm run dev` I'm as monorepo workspaces pattern to install dependencies in both client and server and run the each repo's start command
+
+### Project approach
+
+- **Client**: I'm using a traditional client side SPA generated from the vite react-ts template
+- **Styling**: I used Radix themes and tried to match all style tokens. Curiously, the main action button has a color "Purple" that does not seem to match the hex code but I'm a little bit color blind and so erred on the side of using the tokens specified in Figma. I did bring in `styled-components` to scope styles to specific components. I'm unsure if this is an anti-pattern with your design system.
+- **Data fetching & cache**: I implemented RTK and RTK Query, which enables easy keying off of loading and error states.
+  In this approach, I would normally use open-api codegen to create a swagger doc and generate code for all my query hooks. Since the instructions specified not to touch the /server repo, I did not annotate any of the endpoints and instead used Claude generative AI to create my API slice. In the approach, I had to redefine some types that are originally defined in the `/server` repo but they would be easily shared with a codegen approach. On the initial API request or Users tab, I need both Users and Roles, so I make both requests. When you click over to Roles, there is no network request made because we already have roles in the cache.
+- **Routing**: I used `react-router-dom` with `<Outlet/>` component to navigate between Users and Roles tabs. On many projects I've worked on, deep linking ends up being a requirement, so I like initially scaffold a project to handle tab navigation that way.
+- **Table actions**: I noticed that the `Dialog` component from Radix themes is uncontrolled and relies on a Dialog.Trigger component. This might be a little unorthodox, but since it relied on a trigger and I could not pass an open property to it, it meant that there would be a rendering inefficiency: basically rendering a modal for each row in the table. Instead, I chose to use the primitive `Dialog`, defaulting it to `open` and only rendering it conditionally in my component by keying off of a state value`
+- **Forms**: I brought in react-hook-form for streamlined form control, error handling, and validation.
+- **Components**: The main heavy lifting component I created to share between views was the `DataTable` component. I modeled this a little after my user experience with `mui-data-grid` where you pass columns and rows. The column definition specifies both a `property` and an options `renderCell` function. As the table iterates through the data, it decides how to safely render the content of cell, first checking if a `renderCell` function is available and then falling back to the accessing the property based on the data of type T. This component extends the `PaginatedResponse` type defined in the api and so it can show optional pagination
+
+### Future Considerations:
+
+- Updates on mutations instead of invalidating query tags for the whole list, would surgically update the list based on the new value for a and updated or created user/role
+- Refactoring and organization of generic modal + forms
+- Add animations
+- Tests!!!
+
+## Thanks for your time and consideration!!!
+
 # Frontend Take-Home Assignment
 
 Welcome to the WorkOS Frontend Take-Home Assignment!
