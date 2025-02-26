@@ -1,13 +1,25 @@
-import { DotsHorizontalIcon, PlusIcon, ReloadIcon } from "@radix-ui/react-icons";
-import { Box, Button, DropdownMenu, Flex, IconButton } from "@radix-ui/themes";
+import {
+  DotsHorizontalIcon,
+  InfoCircledIcon,
+  PlusIcon,
+  ReloadIcon,
+} from "@radix-ui/react-icons";
+import {
+  Box,
+  Button,
+  Callout,
+  DropdownMenu,
+  Flex,
+  IconButton,
+} from "@radix-ui/themes";
 import { map } from "lodash";
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import DataTable from "../../components/DataTable";
-import Loader from "../../components/Loader";
-import TableSearch from "../../components/TableSearch";
-import { api, Role } from "../../store/api";
-import { formatDate } from "../../utils";
+import DataTable from "../../../components/DataTable";
+import Loader from "../../../components/Loader";
+import TableSearch from "../../../components/TableSearch";
+import { api, Role } from "../../../store/api";
+import { formatDate } from "../../../utils";
 import RoleForm from "./RoleForm";
 
 function ManageRoles() {
@@ -37,7 +49,23 @@ function ManageRoles() {
   const isLoading = rolesLoading || rolesFetching;
   const isError = rolesError || (!rolesLoading && !rolePage?.data);
 
-  if (isError) return <Box>Error loading roles <Button onClick={()=> window.location.reload()}><ReloadIcon />Reload</Button></Box>;
+  if (isError)
+    return (
+      <Box maxWidth="30rem">
+        <Callout.Root mt="5" color="crimson">
+          <Flex justify="center" align="center" gap="3">
+            <Callout.Icon>
+              <InfoCircledIcon />
+            </Callout.Icon>
+            <Callout.Text size="3">Error loading Roles </Callout.Text>
+            <Button size="2" onClick={() => window.location.reload()}>
+              <ReloadIcon />
+              Reload
+            </Button>
+          </Flex>
+        </Callout.Root>
+      </Box>
+    );
 
   const columns = [
     {
@@ -74,7 +102,7 @@ function ManageRoles() {
         <Flex justify="end">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
-              <IconButton variant="ghost" radius="full">
+              <IconButton variant="ghost" radius="full" color="gray">
                 <DotsHorizontalIcon />
               </IconButton>
             </DropdownMenu.Trigger>
@@ -90,7 +118,7 @@ function ManageRoles() {
     },
   ];
 
-  const tableData = map(rolePage?.data);
+  const tableData = map(rolePage?.data); // safe array;
 
   return (
     <>

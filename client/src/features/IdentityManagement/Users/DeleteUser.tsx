@@ -1,7 +1,7 @@
 import { Root as ControlledRootDialog } from "@radix-ui/react-dialog";
 import { Button, Dialog, Flex, Strong, Text } from "@radix-ui/themes";
-import Loader from "../../components/Loader";
-import { api, User } from "../../store/api";
+import Loader from "../../../components/Loader";
+import { api, User } from "../../../store/api";
 
 interface IUserFormProps {
   handleClose: () => void;
@@ -24,7 +24,7 @@ function DeleteUser(props: IUserFormProps) {
     <>
       <Loader loading={isLoading} />
       <ControlledRootDialog open onOpenChange={props?.handleClose}>
-        <Dialog.Content>
+        <Dialog.Content maxWidth="520px">
           <Dialog.Title>Delete User?</Dialog.Title>
           <Dialog.Description>
             <Text>

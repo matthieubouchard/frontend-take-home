@@ -22,8 +22,8 @@ export interface Role {
 
 export interface PagedResponse<T> {
   data: T[];
-  next: number | null;
-  prev: number | null;
+  next?: number | null;
+  prev?: number | null;
   pages: number;
 }
 
@@ -54,9 +54,9 @@ interface UpdateRoleRequest {
 
 // Tag constants
 export const TAGS = {
-  USERS: 'Users',
-  ROLES: 'Roles',
-  LIST: 'LIST'
+  USERS: "Users",
+  ROLES: "Roles",
+  LIST: "LIST",
 } as const;
 
 export const api = createApi({
@@ -81,12 +81,12 @@ export const api = createApi({
             ]
           : [{ type: TAGS.USERS, id: TAGS.LIST }],
     }),
-    
+
     getUser: builder.query<User, string>({
       query: (id) => `users/${id}`,
       providesTags: (result, error, id) => [{ type: TAGS.USERS, id }],
     }),
-    
+
     createUser: builder.mutation<User, CreateUserRequest>({
       query: (body) => ({
         url: "users",
@@ -95,19 +95,21 @@ export const api = createApi({
       }),
       invalidatesTags: [{ type: TAGS.USERS, id: TAGS.LIST }],
     }),
-    
-    updateUser: builder.mutation<User, { id: string; data: UpdateUserRequest }>({
-      query: ({ id, data }) => ({
-        url: `users/${id}`,
-        method: "PATCH",
-        body: data,
-      }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: TAGS.USERS, id },
-        { type: TAGS.USERS, id: TAGS.LIST },
-      ],
-    }),
-    
+
+    updateUser: builder.mutation<User, { id: string; data: UpdateUserRequest }>(
+      {
+        query: ({ id, data }) => ({
+          url: `users/${id}`,
+          method: "PATCH",
+          body: data,
+        }),
+        invalidatesTags: (result, error, { id }) => [
+          { type: TAGS.USERS, id },
+          { type: TAGS.USERS, id: TAGS.LIST },
+        ],
+      },
+    ),
+
     deleteUser: builder.mutation<User, string>({
       query: (id) => ({
         url: `users/${id}`,
@@ -115,7 +117,7 @@ export const api = createApi({
       }),
       invalidatesTags: [{ type: TAGS.USERS, id: TAGS.LIST }],
     }),
-    
+
     // Roles
     getRoles: builder.query<
       PagedResponse<Role>,
@@ -133,12 +135,12 @@ export const api = createApi({
             ]
           : [{ type: TAGS.ROLES, id: TAGS.LIST }],
     }),
-    
+
     getRole: builder.query<Role, string>({
       query: (id) => `roles/${id}`,
       providesTags: (result, error, id) => [{ type: TAGS.ROLES, id }],
     }),
-    
+
     createRole: builder.mutation<Role, CreateRoleRequest>({
       query: (body) => ({
         url: "roles",
@@ -147,19 +149,21 @@ export const api = createApi({
       }),
       invalidatesTags: [{ type: TAGS.ROLES, id: TAGS.LIST }],
     }),
-    
-    updateRole: builder.mutation<Role, { id: string; data: UpdateRoleRequest }>({
-      query: ({ id, data }) => ({
-        url: `roles/${id}`,
-        method: "PATCH",
-        body: data,
-      }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: TAGS.ROLES, id },
-        { type: TAGS.ROLES, id: TAGS.LIST },
-      ],
-    }),
-    
+
+    updateRole: builder.mutation<Role, { id: string; data: UpdateRoleRequest }>(
+      {
+        query: ({ id, data }) => ({
+          url: `roles/${id}`,
+          method: "PATCH",
+          body: data,
+        }),
+        invalidatesTags: (result, error, { id }) => [
+          { type: TAGS.ROLES, id },
+          { type: TAGS.ROLES, id: TAGS.LIST },
+        ],
+      },
+    ),
+
     deleteRole: builder.mutation<Role, string>({
       query: (id) => ({
         url: `roles/${id}`,

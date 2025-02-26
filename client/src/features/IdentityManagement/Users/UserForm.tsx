@@ -9,8 +9,8 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import { map } from "lodash";
-import { api, Role, User } from "../../store/api";
-import Loader from "../../components/Loader";
+import Loader from "../../../components/Loader";
+import { api, Role, User } from "../../../store/api";
 
 interface IUserFormProps {
   handleClose: () => void;
@@ -20,7 +20,7 @@ interface IUserFormProps {
 
 function UserForm(props: IUserFormProps) {
   const isCreate = !props.user;
-  const [createUser, {isLoading}] = api.useCreateUserMutation();
+  const [createUser, { isLoading }] = api.useCreateUserMutation();
   const handleCreateUser = async () => {
     try {
       await createUser({
@@ -35,8 +35,8 @@ function UserForm(props: IUserFormProps) {
 
   return (
     <ControlledRootDialog open onOpenChange={props?.handleClose}>
-    <Loader loading={isLoading}/>
-      <Dialog.Content>
+      <Loader loading={isLoading} />
+      <Dialog.Content maxWidth="520px">
         <Dialog.Title>{isCreate ? "Add a user" : "Edit User"}</Dialog.Title>
         <Flex direction="column" gap="3">
           <label>
@@ -46,7 +46,7 @@ function UserForm(props: IUserFormProps) {
             <TextField.Root
               defaultValue={props?.user?.first}
               placeholder="Enter your first name"
-              />
+            />
           </label>
           <label>
             <Text as="div" size="2" mb="1" weight="bold">
@@ -55,7 +55,7 @@ function UserForm(props: IUserFormProps) {
             <TextField.Root
               defaultValue={props?.user?.last}
               placeholder="Enter your last name"
-              />
+            />
           </label>
           <label>
             <Text as="div" size="2" mb="1" weight="bold">
@@ -94,7 +94,7 @@ function UserForm(props: IUserFormProps) {
                 props?.handleClose();
               }
             }}
-            >
+          >
             Save
           </Button>
         </Flex>

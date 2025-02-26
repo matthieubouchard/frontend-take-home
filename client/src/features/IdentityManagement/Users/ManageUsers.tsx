@@ -1,8 +1,14 @@
-import { DotsHorizontalIcon, PlusIcon, ReloadIcon } from "@radix-ui/react-icons";
+import {
+  DotsHorizontalIcon,
+  InfoCircledIcon,
+  PlusIcon,
+  ReloadIcon,
+} from "@radix-ui/react-icons";
 import {
   Avatar,
   Box,
   Button,
+  Callout,
   DropdownMenu,
   Flex,
   IconButton,
@@ -10,11 +16,11 @@ import {
 import { isEmpty, keyBy, map } from "lodash";
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import DataTable from "../../components/DataTable"; // Import the new DataTable component
-import Loader from "../../components/Loader";
-import TableSearch from "../../components/TableSearch";
-import { api, User } from "../../store/api";
-import { formatDate } from "../../utils";
+import DataTable from "../../../components/DataTable";
+import Loader from "../../../components/Loader";
+import TableSearch from "../../../components/TableSearch";
+import { api, User } from "../../../store/api";
+import { formatDate } from "../../../utils";
 import DeleteUser from "./DeleteUser";
 import UserForm from "./UserForm";
 
@@ -64,8 +70,23 @@ function ManageUsers() {
     (!rolesLoading && !rolePage?.data) ||
     (!userLoading && !userPage?.data);
 
-  if (isError) return <Box>Error loading Users or Roles <Button onClick={()=> window.location.reload()}><ReloadIcon />Reload</Button></Box>;
-
+  if (isError)
+    return (
+      <Box maxWidth="30rem">
+        <Callout.Root mt="5" color="crimson">
+          <Flex justify="center" align="center" gap="3">
+            <Callout.Icon>
+              <InfoCircledIcon />
+            </Callout.Icon>
+            <Callout.Text size="3">Error loading Users or Roles </Callout.Text>
+            <Button size="2" onClick={() => window.location.reload()}>
+              <ReloadIcon />
+              Reload
+            </Button>
+          </Flex>
+        </Callout.Root>
+      </Box>
+    );
 
   const columns = [
     {
@@ -101,7 +122,7 @@ function ManageUsers() {
         <Flex justify="end">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
-              <IconButton variant="ghost" radius="full">
+              <IconButton variant="ghost" radius="full" color="gray">
                 <DotsHorizontalIcon />
               </IconButton>
             </DropdownMenu.Trigger>

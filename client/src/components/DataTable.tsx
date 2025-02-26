@@ -3,7 +3,13 @@ import React, { ReactNode } from "react";
 import { map } from "lodash";
 
 import { Button, Flex, Table } from "@radix-ui/themes";
+import styled from "styled-components";
 import { PagedResponse } from "../store/api";
+
+const ColumnHeader = styled(Table.ColumnHeaderCell).attrs({ p: "3" })`
+  color: var(--gray-12, #2b333b);
+  line-height: 20px;
+`;
 
 // Define the column interface with a union type for property
 export interface TableColumn<T> {
@@ -12,7 +18,7 @@ export interface TableColumn<T> {
   renderCell?: (row: T) => ReactNode;
 }
 // This table is designed to be used with data from PagedResponse. If onPageChange is defined, then it will render a final row with Pagination functionality
-export interface DataTableProps<T> extends PagedResponse<T>{
+export interface DataTableProps<T> extends PagedResponse<T> {
   columns: TableColumn<T>[];
   page?: number;
   onPageChange?: (page: number) => void;
@@ -52,9 +58,7 @@ function DataTable<T extends object = Record<string, unknown>>({
       <Table.Header>
         <Table.Row>
           {map(columns, (column) => (
-            <Table.ColumnHeaderCell key={column.name} px="3">
-              {column.name}
-            </Table.ColumnHeaderCell>
+            <ColumnHeader key={column.name}>{column.name}</ColumnHeader>
           ))}
         </Table.Row>
       </Table.Header>

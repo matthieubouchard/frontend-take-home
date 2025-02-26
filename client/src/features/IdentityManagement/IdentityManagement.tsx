@@ -1,18 +1,9 @@
-import { Container, TabNav } from "@radix-ui/themes";
+import { TabNav } from "@radix-ui/themes";
 import { map } from "lodash";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import styled from "styled-components";
 import { ROUTES } from "../../Routing/routes";
 
-const UserManagementLayout = styled(Container).attrs({ maxWidth: "840px" })`
-  padding: var(--space-7, 40px) 8px;
-  display: flex;
-  justify-content: center;
-  flex: 1 0 0;
-  align-self: stretch;
-`;
-
-function UserManagement() {
+function IdentityManagement() {
   const location = useLocation();
 
   const TABS = [
@@ -26,8 +17,8 @@ function UserManagement() {
     },
   ];
   return (
-    <UserManagementLayout>
-      <TabNav.Root mb="5">
+    <>
+      <TabNav.Root size="2">
         {map(TABS, (tab) => (
           <TabNav.Link
             asChild
@@ -39,8 +30,8 @@ function UserManagement() {
         ))}
       </TabNav.Root>
       <Outlet />
-    </UserManagementLayout>
+    </>
   );
 }
 
-export default UserManagement;
+export default IdentityManagement;

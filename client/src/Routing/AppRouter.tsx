@@ -4,9 +4,9 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import ManageRoles from "../features/UserManagement/ManageRoles";
-import ManageUsers from "../features/UserManagement/ManageUsers";
-import UserManagement from "../features/UserManagement/UserManagement";
+import IdentityManagement from "../features/IdentityManagement/IdentityManagement";
+import ManageRoles from "../features/IdentityManagement/Roles/ManageRoles";
+import ManageUsers from "../features/IdentityManagement/Users/ManageUsers";
 import { ROUTES } from "./routes";
 
 const AppRouter = () => {
@@ -17,7 +17,7 @@ const AppRouter = () => {
     },
     {
       path: ROUTES.USER_MANAGEMENT.path,
-      element: <UserManagement />,
+      element: <IdentityManagement />,
       children: [
         {
           path: ROUTES.MANAGE_USERS.path,
