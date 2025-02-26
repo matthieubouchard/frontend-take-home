@@ -4,6 +4,7 @@
 
 ### Project approach
 
+- **Client**: I'm using a traditional client side SPA generated from the vite react-ts template
 - **Styling**: I used Radix themes and tried to match all style tokens. Curiously, the main action button has a color "Purple" that does not seem to match the hex code but I'm a little bit color blind and so erred on the side of using the tokens specified in Figma. I did bring in `styled-components` to scope styles to specific components. I'm unsure if this is an anti-pattern with your design system.
 - **Data fetching & cache**: I implemented RTK and RTK Query, which enables easy keying off of loading and error states.
   In this approach, I would normally use open-api codegen to create a swagger doc and generate code for all my query hooks. Since the instructions specified not to touch the /server repo, I did not annotate any of the endpoints and instead used Claude generative AI to create my API slice. In the approach, I had to redefine some types that are originally defined in the `/server` repo but they would be easily shared with a codegen approach. On the initial API request or Users tab, I need both Users and Roles, so I make both requests. When you click over to Roles, there is no network request made because we already have roles in the cache.
