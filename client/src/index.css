@@ -1,5 +1,12 @@
+@font-face {
+  font-family: 'Untitled Sans';
+  src: url('./fonts/UntitledSans/base.otf') format('otf');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* This helps with performance */
+}
 :root {
-  font-family: "Untitled Sans", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Untitled Sans", system-ui, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -12,5 +19,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 
 

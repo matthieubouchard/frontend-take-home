@@ -93,7 +93,7 @@ function ManageUsers() {
       property: "display",
       name: "User",
       renderCell: (row: User) => (
-        <Flex gap="4" align="center">
+        <Flex gap="2" align="center">
           <Avatar
             size="1"
             radius="full"

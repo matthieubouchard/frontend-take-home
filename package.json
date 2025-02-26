@@ -1,7 +1,7 @@
 {
   "name": "frontend-take-home",
   "version": "1.0.0",
-  "description": "Welcome to the WorkOS Frontend Take-Home Assignment!",
+  "description": "WorkOS Frontend Take-Home Assignment!",
   "private": true,
   "workspaces": [
     "client",
