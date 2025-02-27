@@ -17,6 +17,7 @@
 
 - Updates on mutations instead of invalidating query tags for the whole list, would surgically update the list based on the new value for a and updated or created user/role
 - Refactoring and organization of generic modal + forms
+- Handle loading states for table more gracefully. Use Skeleton or do not show any part of table while loading.
 - Add animations
 - Tests!!!
 
