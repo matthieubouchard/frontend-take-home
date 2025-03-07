@@ -141,16 +141,18 @@ function ManageRoles() {
         <RoleForm handleClose={closeModal} role={selectedRole} />
       )}
 
-      <TableSearch
-        handleSearchChange={handleSearchChange}
-        placeholder="Search by name or description…"
-        ActionSlot={
-          <Button>
-            <PlusIcon />
-            Add Role
-          </Button>
-        }
-      />
+      <Box my="5">
+        <TableSearch
+          handleSearchChange={handleSearchChange}
+          placeholder="Search by name or description…"
+          ActionSlot={
+            <Button>
+              <PlusIcon />
+              Add Role
+            </Button>
+          }
+        />
+      </Box>
 
       <DataTable<Role>
         columns={columns}
