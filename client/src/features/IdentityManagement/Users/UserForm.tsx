@@ -35,7 +35,6 @@ function UserForm(props: IUserFormProps) {
 
   return (
     <ControlledRootDialog open onOpenChange={props?.handleClose}>
-      <Loader loading={isLoading} />
       <Dialog.Content maxWidth="520px">
         <Dialog.Title>{isCreate ? "Add a user" : "Edit User"}</Dialog.Title>
         <Flex direction="column" gap="3">
@@ -61,15 +60,21 @@ function UserForm(props: IUserFormProps) {
             <Text as="div" size="2" mb="1" weight="bold">
               Role
             </Text>
-            <Box width="12rem">
+            <Box>
               <Select.Root size="2" defaultValue={props?.user?.roleId}>
-                <Select.Trigger />
+                <Select.Trigger
+                  style={{ width: "45%" }}
+                  placeholder="Select a role..."
+                />
                 <Select.Content>
-                  {map(props.roles, (r) => (
-                    <Select.Item key={r.id} value={r.id}>
-                      {r.name}
-                    </Select.Item>
-                  ))}
+                  <Select.Group>
+                    <Select.Label>Select a role...</Select.Label>
+                    {map(props.roles, (r) => (
+                      <Select.Item key={r.id} value={r.id}>
+                        {r.name}
+                      </Select.Item>
+                    ))}
+                  </Select.Group>
                 </Select.Content>
               </Select.Root>
             </Box>
@@ -83,6 +88,7 @@ function UserForm(props: IUserFormProps) {
           </Dialog.Close>
 
           <Button
+            loading={isLoading}
             onClick={async () => {
               try {
                 if (isCreate) {

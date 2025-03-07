@@ -1,4 +1,5 @@
 import {
+  CheckCircledIcon,
   DotsHorizontalIcon,
   InfoCircledIcon,
   PlusIcon,
@@ -46,7 +47,6 @@ function ManageRoles() {
     error: rolesError,
   } = api.useGetRolesQuery({ page, search });
 
-  const isLoading = rolesLoading || rolesFetching;
   const isError = rolesError || (!rolesLoading && !rolePage?.data);
 
   if (isError)
@@ -75,10 +75,22 @@ function ManageRoles() {
     {
       property: "description",
       name: "Description",
+      width: 0.5,
     },
     {
       property: "isDefault",
       name: "Default",
+      width: 0.1,
+      renderCell: (row: Role) => {
+        if (!row.isDefault) {
+          return null;
+        }
+        return (
+          <Flex align="center" justify="start" pl="4">
+            <CheckCircledIcon color="purple" />
+          </Flex>
+        );
+      },
     },
     {
       property: "createdAt",
@@ -98,6 +110,7 @@ function ManageRoles() {
     {
       property: "actions",
       name: "",
+      width: 0.01,
       renderCell: (row: Role) => (
         <Flex justify="end">
           <DropdownMenu.Root>
@@ -122,7 +135,8 @@ function ManageRoles() {
 
   return (
     <>
-      <Loader loading={isLoading} />
+      <Loader loading={rolesFetching && !rolesLoading} />
+
       {!!selectedRole && (
         <RoleForm handleClose={closeModal} role={selectedRole} />
       )}
@@ -140,6 +154,7 @@ function ManageRoles() {
 
       <DataTable<Role>
         columns={columns}
+        loading={rolesLoading}
         data={tableData}
         page={page}
         pages={rolePage?.pages || 1}
