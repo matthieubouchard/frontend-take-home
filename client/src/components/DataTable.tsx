@@ -124,7 +124,7 @@ function DataTable<T extends object = Record<string, unknown>>({
   };
 
   return (
-    <Table.Root variant="surface" size="1">
+    <Table.Root variant="surface" size="1" style={{ minHeight: "400px" }}>
       <Table.Header>
         <Table.Row>
           {map(columns, (column, index) => (
