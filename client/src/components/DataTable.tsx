@@ -148,17 +148,15 @@ function DataTable<T extends object = Record<string, unknown>>({
             ))}
           </Table.Row>
         </Table.Header>
-        {!loading && !data?.length && (
-          <Table.Row>
-            <Table.Cell colSpan={columns.length}>
-              <EmptyStateContainer>
-                <Text size="2" color="gray">
-                  {emptyText}
-                </Text>
-              </EmptyStateContainer>
-            </Table.Cell>
-          </Table.Row>
-        )}
+        <Table.Row>
+          <Table.Cell colSpan={columns.length}>
+            <EmptyStateContainer>
+              <Text size="2" color="gray">
+                {emptyText}
+              </Text>
+            </EmptyStateContainer>
+          </Table.Cell>
+        </Table.Row>
         {onPageChange && (
           <Table.Row>
             {/* Handle filler cells so that pagination is always the last two cells */}
