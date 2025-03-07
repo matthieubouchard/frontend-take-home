@@ -14,7 +14,7 @@ const TableSearch = ({
   ActionSlot,
 }: ITableSearchProps) => {
   return (
-    <Flex gap="2" my="5">
+    <Flex gap="2">
       <Box flexGrow="2">
         <TextField.Root
           size="2"

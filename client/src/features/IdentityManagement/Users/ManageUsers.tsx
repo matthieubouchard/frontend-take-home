@@ -157,20 +157,22 @@ function ManageUsers() {
         <DeleteUser handleClose={handleCloseDeleteModal} user={userToDelete} />
       )}
 
-      <TableSearch
-        handleSearchChange={handleSearchChange}
-        placeholder="Search by name…"
-        ActionSlot={
-          <Button onClick={() => setUserModalOpen(true)}>
-            <PlusIcon />
-            Add User
-          </Button>
-        }
-      />
+      <Box my="5">
+        <TableSearch
+          handleSearchChange={handleSearchChange}
+          placeholder="Search by name…"
+          ActionSlot={
+            <Button onClick={() => setUserModalOpen(true)}>
+              <PlusIcon />
+              Add User
+            </Button>
+          }
+        />
+      </Box>
 
       <DataTable<User>
         loading={isLoading}
-        refetching={userFetching}
+        emptyText={`No users found that match your search: ${search}`}
         columns={columns}
         data={tableData}
         page={page}

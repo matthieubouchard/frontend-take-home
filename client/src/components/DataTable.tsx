@@ -1,14 +1,22 @@
 import React, { ReactNode, useMemo } from "react";
 
-import { map } from "lodash";
+import { map, times } from "lodash";
 
-import { Button, Flex, Skeleton, Table } from "@radix-ui/themes";
+import { Button, Flex, Skeleton, Table, Text } from "@radix-ui/themes";
 import styled from "styled-components";
 import { PagedResponse } from "../store/api";
 
 const ColumnHeader = styled(Table.ColumnHeaderCell).attrs({ p: "3" })`
   color: var(--gray-12, #2b333b);
   line-height: 20px;
+`;
+
+const EmptyStateContainer = styled.div`
+  height: 400px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 // Define the column interface with a union type for property
@@ -18,14 +26,15 @@ export interface TableColumn<T> {
   width?: number; // Optional number representing fraction of total width (0-1)
   renderCell?: (row: T) => ReactNode;
 }
+
 // This table is designed to be used with data from PagedResponse. If onPageChange is defined, then it will render a final row with Pagination functionality
 export interface DataTableProps<T> extends PagedResponse<T> {
   columns: TableColumn<T>[];
   page?: number;
   loading?: boolean;
-  refetching?: boolean;
   onPageChange?: (page: number) => void;
-  numberLoadingRows?: number; // number of skeleton rows to render when loading
+  pageSize?: number;
+  emptyText?: string;
 }
 
 // Extend the default generic constraint to allow for "virtual" columns like actions where you render a menu to edit/delete
@@ -37,9 +46,9 @@ function DataTable<T extends object = Record<string, unknown>>({
   prev = null,
   next = null,
   loading = false,
-  refetching = false,
   onPageChange,
-  numberLoadingRows = 10,
+  pageSize = 10,
+  emptyText = "No rows found",
 }: DataTableProps<T>) {
   // Calculate column widths as percentages
   const columnWidths = useMemo(() => {
@@ -94,36 +103,97 @@ function DataTable<T extends object = Record<string, unknown>>({
 
   // Render skeleton rows when loading
   const renderSkeletonRows = () => {
-    const skeletonRows = [];
-
-    for (let i = 0; i < numberLoadingRows; i++) {
-      skeletonRows.push(
-        <Table.Row key={`skeleton-row-${i}`} align="center">
-          {map(columns, (_, columnIndex) => {
-            return columnIndex === 0 ? (
-              <Table.RowHeaderCell
-                key={`skeleton-cell-${columnIndex}`}
-                px="3"
-                style={{ width: columnWidths[columnIndex] }}
-              >
-                <Skeleton style={{ height: "20px", width: "100%" }} />
-              </Table.RowHeaderCell>
-            ) : (
-              <Table.Cell
-                key={`skeleton-cell-${columnIndex}`}
-                px="3"
-                style={{ width: columnWidths[columnIndex] }}
-              >
-                <Skeleton style={{ height: "20px", width: "100%" }} />
-              </Table.Cell>
-            );
-          })}
-        </Table.Row>,
-      );
-    }
-
-    return skeletonRows;
+    return times(pageSize, (i) => (
+      <Table.Row key={`skeleton-row-${i}`} align="center">
+        {map(columns, (_, columnIndex) => {
+          return (
+            <Table.Cell
+              key={`skeleton-cell-${columnIndex}`}
+              px="3"
+              style={{ width: columnWidths[columnIndex] }}
+            >
+              <Skeleton style={{ height: "20px", width: "100%" }} />
+            </Table.Cell>
+          );
+        })}
+      </Table.Row>
+    ));
   };
+
+  // Render empty rows to maintain consistent height
+  const renderEmptyRows = (count: number) => {
+    return times(count, (i) => (
+      <Table.Row key={`empty-row-${i}`} align="center">
+        <Table.Cell
+          colSpan={columns.length}
+          style={{ boxShadow: "0 0 0" }}
+        ></Table.Cell>
+      </Table.Row>
+    ));
+  };
+
+  // Empty state when no data is available
+  if (!loading && (!data || data.length === 0)) {
+    return (
+      <Table.Root variant="surface" size="1">
+        <Table.Header>
+          <Table.Row>
+            {map(columns, (column, index) => (
+              <ColumnHeader
+                key={column.name}
+                style={{ width: columnWidths[index] }}
+              >
+                {column.name}
+              </ColumnHeader>
+            ))}
+          </Table.Row>
+        </Table.Header>
+        <Table.Row>
+          <Table.Cell colSpan={columns.length}>
+            <EmptyStateContainer>
+              <Text size="2" color="gray">
+                {emptyText}
+              </Text>
+            </EmptyStateContainer>
+          </Table.Cell>
+        </Table.Row>
+        {onPageChange && (
+          <Table.Row>
+            {/* Handle filler cells so that pagination is always the last two cells */}
+            {columns.length > 2 &&
+              map(columns.slice(0, -2), (_, index) => (
+                <Table.Cell key={`pagination-spacer-${index}`}></Table.Cell>
+              ))}
+            <Table.Cell>
+              Page {page} of {pages}
+            </Table.Cell>
+            <Table.Cell>
+              <Flex gap="3" justify="end">
+                <Button
+                  size="1"
+                  color="gray"
+                  disabled={!prev}
+                  variant="outline"
+                  onClick={() => prev && onPageChange(prev)}
+                >
+                  Previous
+                </Button>
+                <Button
+                  size="1"
+                  color="gray"
+                  variant="outline"
+                  disabled={!next}
+                  onClick={() => next && onPageChange(next)}
+                >
+                  Next
+                </Button>
+              </Flex>
+            </Table.Cell>
+          </Table.Row>
+        )}
+      </Table.Root>
+    );
+  }
 
   return (
     <Table.Root variant="surface" size="1" style={{ minHeight: "400px" }}>
@@ -179,6 +249,11 @@ function DataTable<T extends object = Record<string, unknown>>({
                 })}
               </Table.Row>
             ))}
+
+        {/* Render empty rows to maintain consistent height */}
+        {!loading &&
+          data.length < pageSize &&
+          renderEmptyRows(pageSize - data.length)}
         {onPageChange && (
           <Table.Row>
             {/* Handle filler cells so that pagination is always the last two cells */}
@@ -194,7 +269,7 @@ function DataTable<T extends object = Record<string, unknown>>({
                 <Button
                   size="1"
                   color="gray"
-                  disabled={!prev || loading || refetching}
+                  disabled={!prev}
                   variant="outline"
                   onClick={() => prev && onPageChange(prev)}
                 >
@@ -204,7 +279,7 @@ function DataTable<T extends object = Record<string, unknown>>({
                   size="1"
                   color="gray"
                   variant="outline"
-                  disabled={!next || loading || refetching}
+                  disabled={!next}
                   onClick={() => next && onPageChange(next)}
                 >
                   Next
