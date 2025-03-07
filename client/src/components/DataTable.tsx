@@ -22,8 +22,8 @@ export interface TableColumn<T> {
 export interface DataTableProps<T> extends PagedResponse<T> {
   columns: TableColumn<T>[];
   page?: number;
-  loading?: boolean; // New loading property
-  refetching?: boolean; // New loading property
+  loading?: boolean;
+  refetching?: boolean;
   onPageChange?: (page: number) => void;
   numberLoadingRows?: number; // number of skeleton rows to render when loading
 }
