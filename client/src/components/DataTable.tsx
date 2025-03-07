@@ -23,6 +23,7 @@ export interface DataTableProps<T> extends PagedResponse<T> {
   columns: TableColumn<T>[];
   page?: number;
   loading?: boolean; // New loading property
+  refetching?: boolean; // New loading property
   onPageChange?: (page: number) => void;
   numberLoadingRows?: number; // number of skeleton rows to render when loading
 }
@@ -35,7 +36,8 @@ function DataTable<T extends object = Record<string, unknown>>({
   pages = 1,
   prev = null,
   next = null,
-  loading = false, // Default to false
+  loading = false,
+  refetching = false,
   onPageChange,
   numberLoadingRows = 10,
 }: DataTableProps<T>) {
@@ -192,7 +194,7 @@ function DataTable<T extends object = Record<string, unknown>>({
                 <Button
                   size="1"
                   color="gray"
-                  disabled={!prev}
+                  disabled={!prev || loading || refetching}
                   variant="outline"
                   onClick={() => prev && onPageChange(prev)}
                 >
@@ -202,7 +204,7 @@ function DataTable<T extends object = Record<string, unknown>>({
                   size="1"
                   color="gray"
                   variant="outline"
-                  disabled={!next}
+                  disabled={!next || loading || refetching}
                   onClick={() => next && onPageChange(next)}
                 >
                   Next

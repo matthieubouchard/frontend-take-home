@@ -170,6 +170,7 @@ function ManageUsers() {
 
       <DataTable<User>
         loading={isLoading}
+        refetching={userFetching}
         columns={columns}
         data={tableData}
         page={page}

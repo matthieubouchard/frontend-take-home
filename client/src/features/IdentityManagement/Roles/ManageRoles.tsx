@@ -155,6 +155,7 @@ function ManageRoles() {
       <DataTable<Role>
         columns={columns}
         loading={rolesLoading}
+        refetching={rolesFetching}
         data={tableData}
         page={page}
         pages={rolePage?.pages || 1}
