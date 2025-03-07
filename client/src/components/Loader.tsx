@@ -18,14 +18,7 @@ const Loader = ({ loading = false }: { loading: boolean }) => {
         }}
       >
         <Theme>
-          <Spinner
-            style={{
-              height: "3rem",
-              width: "3rem",
-            }}
-          >
-            Loading...
-          </Spinner>
+          <Spinner>Loading...</Spinner>
         </Theme>
       </div>
     </Portal>

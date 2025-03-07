@@ -63,7 +63,7 @@ function ManageUsers() {
 
   const roleDict = keyBy(rolePage?.data, "id");
 
-  const isLoading = rolesLoading || userLoading || userFetching;
+  const isLoading = rolesLoading || userLoading;
   const isError =
     userError ||
     rolesError ||
@@ -118,6 +118,7 @@ function ManageUsers() {
     {
       property: "actions",
       name: "",
+      width: 0.1,
       renderCell: (row: User) => (
         <Flex justify="end">
           <DropdownMenu.Root>
@@ -144,7 +145,7 @@ function ManageUsers() {
 
   return (
     <>
-      <Loader loading={isLoading} />
+      <Loader loading={userFetching && !userLoading} />
       {(!!selectedUser || userModalOpen) && (
         <UserForm
           handleClose={closeModal}
@@ -168,6 +169,7 @@ function ManageUsers() {
       />
 
       <DataTable<User>
+        loading={isLoading}
         columns={columns}
         data={tableData}
         page={page}

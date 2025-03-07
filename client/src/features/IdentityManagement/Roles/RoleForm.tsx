@@ -47,7 +47,6 @@ function RoleForm(props: IRoleFormProps) {
 
   return (
     <>
-      <Loader loading={isLoading} />
       <ControlledRootDialog open onOpenChange={props.handleClose}>
         <Dialog.Content maxWidth="520px">
           <Dialog.Title>Update role</Dialog.Title>
@@ -86,7 +85,7 @@ function RoleForm(props: IRoleFormProps) {
               </Button>
             </Dialog.Close>
 
-            <Button type="submit" form="updateRole">
+            <Button type="submit" form="updateRole" loading={isLoading}>
               Save
             </Button>
           </Flex>
