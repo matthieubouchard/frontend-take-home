@@ -21,6 +21,14 @@
 - Add animations
 - Tests!!!
 
+### Updates since initial submission
+
+- Render skeleton table cells on initial table load
+- Show spinner to indicate data fetching that is not the initial load and remove app-wide instances of spinner. Also reduce size.
+- Make use of Button `loading` property on forms
+- DataTable: added `loading` property which will render a default number of skeleton rows. Introduce `width` property on `TableColumn` definition. Allow it to be defined as a float. Sum cannot exceed 1 or error is thrown. Columns with undefined widths are calculated by dividing the count of those columns by the remaining width. This resolves the column width jumping issue.
+- Role table: render an checkmark icon if role is default, else leave the cell blank
+
 ## Thanks for your time and consideration!!!
 
 # Frontend Take-Home Assignment

@@ -1,6 +1,6 @@
 import React, { ReactNode, useMemo } from "react";
 
-import { map, times } from "lodash";
+import { map } from "lodash";
 
 import { Button, Flex, Skeleton, Table } from "@radix-ui/themes";
 import styled from "styled-components";
@@ -24,7 +24,7 @@ export interface DataTableProps<T> extends PagedResponse<T> {
   page?: number;
   loading?: boolean; // New loading property
   onPageChange?: (page: number) => void;
-  numberLoadingRows?: number; // New numberLoadingRows property
+  numberLoadingRows?: number; // number of skeleton rows to render when loading
 }
 
 // Extend the default generic constraint to allow for "virtual" columns like actions where you render a menu to edit/delete
@@ -37,7 +37,7 @@ function DataTable<T extends object = Record<string, unknown>>({
   next = null,
   loading = false, // Default to false
   onPageChange,
-  numberLoadingRows = 10, // Default to 10
+  numberLoadingRows = 10,
 }: DataTableProps<T>) {
   // Calculate column widths as percentages
   const columnWidths = useMemo(() => {
