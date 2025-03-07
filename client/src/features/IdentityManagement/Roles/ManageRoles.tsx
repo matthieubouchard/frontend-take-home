@@ -47,7 +47,6 @@ function ManageRoles() {
     error: rolesError,
   } = api.useGetRolesQuery({ page, search });
 
-  // const isLoading = rolesLoading || rolesFetching;
   const isError = rolesError || (!rolesLoading && !rolePage?.data);
 
   if (isError)

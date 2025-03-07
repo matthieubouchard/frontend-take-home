@@ -46,52 +46,50 @@ function RoleForm(props: IRoleFormProps) {
   };
 
   return (
-    <>
-      <ControlledRootDialog open onOpenChange={props.handleClose}>
-        <Dialog.Content maxWidth="520px">
-          <Dialog.Title>Update role</Dialog.Title>
-          {!!error && (
-            <Callout.Root>
-              <Callout.Icon>
-                <InfoCircledIcon />
-              </Callout.Icon>
-              <Callout.Text>
-                There was an error submitting the form, please try again
-              </Callout.Text>
-            </Callout.Root>
-          )}
-          <Flex direction="column" gap="3">
-            <form onSubmit={handleSubmit(handleUpdateRole)} id="updateRole">
-              <label>
-                <Text as="div" size="2" mb="1" weight="bold">
-                  Name
+    <ControlledRootDialog open onOpenChange={props.handleClose}>
+      <Dialog.Content maxWidth="520px">
+        <Dialog.Title>Update role</Dialog.Title>
+        {!!error && (
+          <Callout.Root>
+            <Callout.Icon>
+              <InfoCircledIcon />
+            </Callout.Icon>
+            <Callout.Text>
+              There was an error submitting the form, please try again
+            </Callout.Text>
+          </Callout.Root>
+        )}
+        <Flex direction="column" gap="3">
+          <form onSubmit={handleSubmit(handleUpdateRole)} id="updateRole">
+            <label>
+              <Text as="div" size="2" mb="1" weight="bold">
+                Name
+              </Text>
+              <TextField.Root
+                {...register("name", { required: "Required" })}
+                placeholder="Enter the role name"
+              />
+              {errors?.name && (
+                <Text size="1" color="red">
+                  {errors?.name.message}
                 </Text>
-                <TextField.Root
-                  {...register("name", { required: "Required" })}
-                  placeholder="Enter the role name"
-                />
-                {errors?.name && (
-                  <Text size="1" color="red">
-                    {errors?.name.message}
-                  </Text>
-                )}
-              </label>
-            </form>
-          </Flex>
-          <Flex gap="3" mt="4" justify="end">
-            <Dialog.Close>
-              <Button variant="soft" color="gray" onClick={props?.handleClose}>
-                Cancel
-              </Button>
-            </Dialog.Close>
-
-            <Button type="submit" form="updateRole" loading={isLoading}>
-              Save
+              )}
+            </label>
+          </form>
+        </Flex>
+        <Flex gap="3" mt="4" justify="end">
+          <Dialog.Close>
+            <Button variant="soft" color="gray" onClick={props?.handleClose}>
+              Cancel
             </Button>
-          </Flex>
-        </Dialog.Content>
-      </ControlledRootDialog>
-    </>
+          </Dialog.Close>
+
+          <Button type="submit" form="updateRole" loading={isLoading}>
+            Save
+          </Button>
+        </Flex>
+      </Dialog.Content>
+    </ControlledRootDialog>
   );
 }
 
