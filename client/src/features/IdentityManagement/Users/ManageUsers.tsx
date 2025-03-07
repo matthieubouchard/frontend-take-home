@@ -172,7 +172,7 @@ function ManageUsers() {
 
       <DataTable<User>
         loading={isLoading}
-        refetching={userFetching}
+        emptyText={`No users found that match your search: ${search}`}
         columns={columns}
         data={tableData}
         page={page}

@@ -157,7 +157,7 @@ function ManageRoles() {
       <DataTable<Role>
         columns={columns}
         loading={rolesLoading}
-        refetching={rolesFetching}
+        emptyText={`No roles found that match your search: ${search}`}
         data={tableData}
         page={page}
         pages={rolePage?.pages || 1}

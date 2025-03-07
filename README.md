@@ -26,7 +26,11 @@
 - Render skeleton table cells on initial table load
 - Show spinner to indicate data fetching that is not the initial load and remove app-wide instances of spinner. Also reduce size.
 - Make use of Button `loading` property on forms
-- DataTable: added `loading` property which will render a default number of skeleton rows. Introduce `width` property on `TableColumn` definition. Allow it to be defined as a float. Sum cannot exceed 1 or error is thrown. Columns with undefined widths are calculated by dividing the count of those columns by the remaining width. This resolves the column width jumping issue. Also gave the table a minHeight of 400px to keep consistent layout with the table as the main focal point. Would need to work on position of the Pagination row to keep it at the bottom
+- DataTable:
+  - Add `loading` property which will render a default number of skeleton rows.
+  - Add `width` property on `TableColumn` definition. Allow it to be defined as a float. Sum cannot exceed 1 or error is thrown. Columns with undefined widths are calculated by dividing the count of those columns by the remaining width. This resolves the column width jumping issue. Also gave the table a minHeight of 400px to keep consistent layout with the table as the main focal point.
+  - Add `pageSize` variable in order to be able to render empty rows and keep pagination on bottom, to keep consistent page size. There is still a little jump going on that could be addressed.
+  - Handle empty state when not loading and no data found. Displays default text "No data found"
 - Role table: render an checkmark icon if role is default, else leave the cell blank
 
 ## Thanks for your time and consideration!!!
