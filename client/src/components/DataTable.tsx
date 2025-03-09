@@ -135,6 +135,63 @@ function DataTable<T extends object = Record<string, unknown>>({
     ));
   };
 
+  const renderTableContent = () => {
+    if (loading) {
+      return renderSkeletonRows();
+    }
+    if (noDataFound) {
+      return (
+        <Table.Row>
+          <Table.Cell colSpan={columns.length}>
+            <EmptyStateContainer>
+              <Text size="2" color="gray">
+                {emptyText}
+              </Text>
+            </EmptyStateContainer>
+          </Table.Cell>
+        </Table.Row>
+      );
+    }
+
+    return map(data, (row, rowIndex) => (
+      <Table.Row key={`row-${rowIndex}`} align="center">
+        {map(columns, (column, columnIndex) => {
+          // Use renderCell function if provided, otherwise safely get and convert the value
+          let cellContent: ReactNode;
+          if (column.renderCell) {
+            cellContent = column.renderCell(row);
+          } else {
+            // Check if the property exists on the row (using type assertion for safety)
+            const propKey = column.property as string;
+            if (propKey in row) {
+              cellContent = safeToReactNode(row[propKey as keyof T]);
+            } else {
+              cellContent = "";
+            }
+          }
+
+          return columnIndex === 0 ? (
+            <Table.RowHeaderCell
+              key={`${String(column.property)}-${columnIndex}`}
+              px="3"
+              style={{ width: columnWidths[columnIndex] }}
+            >
+              {cellContent}
+            </Table.RowHeaderCell>
+          ) : (
+            <Table.Cell
+              key={`${String(column.property)}-${columnIndex}`}
+              px="3"
+              style={{ width: columnWidths[columnIndex] }}
+            >
+              {cellContent}
+            </Table.Cell>
+          );
+        })}
+      </Table.Row>
+    ));
+  };
+
   return (
     <Table.Root variant="surface" size="1" style={{ minHeight: "400px" }}>
       <Table.Header>
@@ -150,56 +207,7 @@ function DataTable<T extends object = Record<string, unknown>>({
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {loading && renderSkeletonRows()}
-        {noDataFound ? (
-          <Table.Row>
-            <Table.Cell colSpan={columns.length}>
-              <EmptyStateContainer>
-                <Text size="2" color="gray">
-                  {emptyText}
-                </Text>
-              </EmptyStateContainer>
-            </Table.Cell>
-          </Table.Row>
-        ) : (
-          map(data, (row, rowIndex) => (
-            <Table.Row key={`row-${rowIndex}`} align="center">
-              {map(columns, (column, columnIndex) => {
-                // Use renderCell function if provided, otherwise safely get and convert the value
-                let cellContent: ReactNode;
-                if (column.renderCell) {
-                  cellContent = column.renderCell(row);
-                } else {
-                  // Check if the property exists on the row (using type assertion for safety)
-                  const propKey = column.property as string;
-                  if (propKey in row) {
-                    cellContent = safeToReactNode(row[propKey as keyof T]);
-                  } else {
-                    cellContent = "";
-                  }
-                }
-
-                return columnIndex === 0 ? (
-                  <Table.RowHeaderCell
-                    key={`${String(column.property)}-${columnIndex}`}
-                    px="3"
-                    style={{ width: columnWidths[columnIndex] }}
-                  >
-                    {cellContent}
-                  </Table.RowHeaderCell>
-                ) : (
-                  <Table.Cell
-                    key={`${String(column.property)}-${columnIndex}`}
-                    px="3"
-                    style={{ width: columnWidths[columnIndex] }}
-                  >
-                    {cellContent}
-                  </Table.Cell>
-                );
-              })}
-            </Table.Row>
-          ))
-        )}
+        {renderTableContent()}
 
         {/* Render empty rows to maintain consistent height */}
         {!loading && !noDataFound && renderEmptyRows(pageSize - data.length)}
