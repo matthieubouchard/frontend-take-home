@@ -32,6 +32,7 @@ export interface DataTableProps<T> extends PagedResponse<T> {
   columns: TableColumn<T>[];
   page?: number;
   loading?: boolean;
+  fetching?: boolean;
   onPageChange?: (page: number) => void;
   pageSize?: number;
   emptyText?: string;
@@ -46,6 +47,7 @@ function DataTable<T extends object = Record<string, unknown>>({
   prev = null,
   next = null,
   loading = false,
+  fetching = false,
   onPageChange,
   pageSize = 10,
   emptyText = "No rows found",
@@ -120,6 +122,7 @@ function DataTable<T extends object = Record<string, unknown>>({
     ));
   };
 
+  const noDataFound = !loading && (!data || data.length === 0);
   // Render empty rows to maintain consistent height
   const renderEmptyRows = (count: number) => {
     return times(count, (i) => (
@@ -131,69 +134,6 @@ function DataTable<T extends object = Record<string, unknown>>({
       </Table.Row>
     ));
   };
-
-  // Empty state when no data is available
-  if (!loading && (!data || data.length === 0)) {
-    return (
-      <Table.Root variant="surface" size="1">
-        <Table.Header>
-          <Table.Row>
-            {map(columns, (column, index) => (
-              <ColumnHeader
-                key={column.name}
-                style={{ width: columnWidths[index] }}
-              >
-                {column.name}
-              </ColumnHeader>
-            ))}
-          </Table.Row>
-        </Table.Header>
-        <Table.Row>
-          <Table.Cell colSpan={columns.length}>
-            <EmptyStateContainer>
-              <Text size="2" color="gray">
-                {emptyText}
-              </Text>
-            </EmptyStateContainer>
-          </Table.Cell>
-        </Table.Row>
-        {onPageChange && (
-          <Table.Row>
-            {/* Handle filler cells so that pagination is always the last two cells */}
-            {columns.length > 2 &&
-              map(columns.slice(0, -2), (_, index) => (
-                <Table.Cell key={`pagination-spacer-${index}`}></Table.Cell>
-              ))}
-            <Table.Cell>
-              Page {page} of {pages}
-            </Table.Cell>
-            <Table.Cell>
-              <Flex gap="3" justify="end">
-                <Button
-                  size="1"
-                  color="gray"
-                  disabled={!prev}
-                  variant="outline"
-                  onClick={() => prev && onPageChange(prev)}
-                >
-                  Previous
-                </Button>
-                <Button
-                  size="1"
-                  color="gray"
-                  variant="outline"
-                  disabled={!next}
-                  onClick={() => next && onPageChange(next)}
-                >
-                  Next
-                </Button>
-              </Flex>
-            </Table.Cell>
-          </Table.Row>
-        )}
-      </Table.Root>
-    );
-  }
 
   return (
     <Table.Root variant="surface" size="1" style={{ minHeight: "400px" }}>
@@ -210,50 +150,59 @@ function DataTable<T extends object = Record<string, unknown>>({
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {loading
-          ? renderSkeletonRows()
-          : map(data, (row, rowIndex) => (
-              <Table.Row key={`row-${rowIndex}`} align="center">
-                {map(columns, (column, columnIndex) => {
-                  // Use renderCell function if provided, otherwise safely get and convert the value
-                  let cellContent: ReactNode;
-                  if (column.renderCell) {
-                    cellContent = column.renderCell(row);
+        {loading && renderSkeletonRows()}
+        {noDataFound ? (
+          <Table.Row>
+            <Table.Cell colSpan={columns.length}>
+              <EmptyStateContainer>
+                <Text size="2" color="gray">
+                  {emptyText}
+                </Text>
+              </EmptyStateContainer>
+            </Table.Cell>
+          </Table.Row>
+        ) : (
+          map(data, (row, rowIndex) => (
+            <Table.Row key={`row-${rowIndex}`} align="center">
+              {map(columns, (column, columnIndex) => {
+                // Use renderCell function if provided, otherwise safely get and convert the value
+                let cellContent: ReactNode;
+                if (column.renderCell) {
+                  cellContent = column.renderCell(row);
+                } else {
+                  // Check if the property exists on the row (using type assertion for safety)
+                  const propKey = column.property as string;
+                  if (propKey in row) {
+                    cellContent = safeToReactNode(row[propKey as keyof T]);
                   } else {
-                    // Check if the property exists on the row (using type assertion for safety)
-                    const propKey = column.property as string;
-                    if (propKey in row) {
-                      cellContent = safeToReactNode(row[propKey as keyof T]);
-                    } else {
-                      cellContent = "";
-                    }
+                    cellContent = "";
                   }
+                }
 
-                  return columnIndex === 0 ? (
-                    <Table.RowHeaderCell
-                      key={`${String(column.property)}-${columnIndex}`}
-                      px="3"
-                      style={{ width: columnWidths[columnIndex] }}
-                    >
-                      {cellContent}
-                    </Table.RowHeaderCell>
-                  ) : (
-                    <Table.Cell
-                      key={`${String(column.property)}-${columnIndex}`}
-                      px="3"
-                      style={{ width: columnWidths[columnIndex] }}
-                    >
-                      {cellContent}
-                    </Table.Cell>
-                  );
-                })}
-              </Table.Row>
-            ))}
+                return columnIndex === 0 ? (
+                  <Table.RowHeaderCell
+                    key={`${String(column.property)}-${columnIndex}`}
+                    px="3"
+                    style={{ width: columnWidths[columnIndex] }}
+                  >
+                    {cellContent}
+                  </Table.RowHeaderCell>
+                ) : (
+                  <Table.Cell
+                    key={`${String(column.property)}-${columnIndex}`}
+                    px="3"
+                    style={{ width: columnWidths[columnIndex] }}
+                  >
+                    {cellContent}
+                  </Table.Cell>
+                );
+              })}
+            </Table.Row>
+          ))
+        )}
 
         {/* Render empty rows to maintain consistent height */}
-        {!loading &&
-          data.length < pageSize &&
-          renderEmptyRows(pageSize - data.length)}
+        {!loading && !noDataFound && renderEmptyRows(pageSize - data.length)}
         {onPageChange && (
           <Table.Row>
             {/* Handle filler cells so that pagination is always the last two cells */}
@@ -269,7 +218,7 @@ function DataTable<T extends object = Record<string, unknown>>({
                 <Button
                   size="1"
                   color="gray"
-                  disabled={!prev}
+                  disabled={!prev || fetching}
                   variant="outline"
                   onClick={() => prev && onPageChange(prev)}
                 >
@@ -279,7 +228,7 @@ function DataTable<T extends object = Record<string, unknown>>({
                   size="1"
                   color="gray"
                   variant="outline"
-                  disabled={!next}
+                  disabled={!next || fetching}
                   onClick={() => next && onPageChange(next)}
                 >
                   Next

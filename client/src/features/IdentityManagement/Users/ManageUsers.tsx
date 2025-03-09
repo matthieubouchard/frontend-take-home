@@ -50,8 +50,8 @@ function ManageUsers() {
 
   const {
     data: userPage,
-    isLoading: userLoading,
-    isFetching: userFetching,
+    isLoading: usersLoading,
+    isFetching: usersFetching,
     error: userError,
   } = api.useGetUsersQuery({ page, search });
 
@@ -63,12 +63,12 @@ function ManageUsers() {
 
   const roleDict = keyBy(rolePage?.data, "id");
 
-  const isLoading = rolesLoading || userLoading;
+  const isLoading = rolesLoading || usersLoading;
   const isError =
     userError ||
     rolesError ||
     (!rolesLoading && !rolePage?.data) ||
-    (!userLoading && !userPage?.data);
+    (!usersLoading && !userPage?.data);
 
   if (isError)
     return (
@@ -145,7 +145,7 @@ function ManageUsers() {
 
   return (
     <>
-      <Loader loading={userFetching && !userLoading} />
+      <Loader loading={usersFetching && !usersLoading} />
       {(!!selectedUser || userModalOpen) && (
         <UserForm
           handleClose={closeModal}
@@ -172,6 +172,7 @@ function ManageUsers() {
 
       <DataTable<User>
         loading={isLoading}
+        fetching={usersFetching}
         emptyText={`No users found that match your search: ${search}`}
         columns={columns}
         data={tableData}

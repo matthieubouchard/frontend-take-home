@@ -12,6 +12,7 @@ import {
   DropdownMenu,
   Flex,
   IconButton,
+  Text,
 } from "@radix-ui/themes";
 import { map } from "lodash";
 import { useState } from "react";
@@ -71,27 +72,28 @@ function ManageRoles() {
     {
       property: "name",
       name: "Name",
+      renderCell: (row: Role) => {
+        return (
+          <Flex align="start" direction="column" justify="center">
+            <Text>{row.name}</Text>
+            {row.isDefault && (
+              <Flex mt="1">
+                <CheckCircledIcon scale="1" color="purple" />{" "}
+                <Text size="1" ml="1" color="purple">
+                  Default
+                </Text>
+              </Flex>
+            )}
+          </Flex>
+        );
+      },
     },
     {
       property: "description",
       name: "Description",
       width: 0.5,
     },
-    {
-      property: "isDefault",
-      name: "Default",
-      width: 0.1,
-      renderCell: (row: Role) => {
-        if (!row.isDefault) {
-          return null;
-        }
-        return (
-          <Flex align="center" justify="start" pl="4">
-            <CheckCircledIcon color="purple" />
-          </Flex>
-        );
-      },
-    },
+
     {
       property: "createdAt",
       name: "Created",
@@ -104,6 +106,21 @@ function ManageRoles() {
           }}
         >
           {formatDate(row.createdAt)}
+        </Box>
+      ),
+    },
+    {
+      property: "updatedAt",
+      name: "Updated",
+      renderCell: (row: Role) => (
+        <Box
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "visible",
+            minWidth: "8rem",
+          }}
+        >
+          {formatDate(row.updatedAt)}
         </Box>
       ),
     },
@@ -157,6 +174,7 @@ function ManageRoles() {
       <DataTable<Role>
         columns={columns}
         loading={rolesLoading}
+        fetching={rolesFetching}
         emptyText={`No roles found that match your search: ${search}`}
         data={tableData}
         page={page}
